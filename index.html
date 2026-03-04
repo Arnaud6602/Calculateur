@@ -7,33 +7,27 @@
     <style>
         :root { --primary: #1e3a8a; --bg: #f8fafc; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
-        
         .card { background: white; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
-        
-        /* Titre cliquable pour changer de mode discrètement */
         h2 { text-align: center; color: #1e293b; margin-top: 0; font-size: 1.3rem; cursor: pointer; user-select: none; }
-        
         .product-preview { width: 100%; height: 250px; background: #fff; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .product-preview img { width: 100%; height: 100%; object-fit: contain; }
-
         label { display: block; margin: 12px 0 5px; font-weight: 600; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
         select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background-color: #fff; color: #1e293b; margin-bottom: 5px; outline: none; -webkit-appearance: none; }
-        
         .specs { margin-top: 20px; font-size: 0.85rem; color: #475569; background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #e2e8f0; }
         .specs b { color: #1e293b; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.7rem; }
-
-        /* Retour du dégradé bleu */
-        .result-box { margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+        
+        .result-box { margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; user-select: none; }
         .price-label { font-size: 0.8rem; opacity: 0.9; font-weight: 600; }
         .price-value { font-size: 2.5rem; font-weight: 800; margin: 5px 0; }
+        .discount-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 5px; margin-left: 5px; vertical-align: middle; }
         
-        /* Gain ultra discret en bas */
         .gain-secret { margin-top: 15px; color: #cbd5e1; font-size: 0.65rem; text-align: center; width: 100%; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <div class="card">
+    <!-- Clic ici pour passer en mode AMI discrètement -->
     <h2 id="title" onclick="toggleMode()">🏠 Mon Installation</h2>
 
     <div class="product-preview">
@@ -58,7 +52,7 @@
         <option value="2">2 postes (Duo)</option>
         <option value="3">3 postes</option>
         <option value="4">4 postes</option>
-        <option value="5">5 postes (Maison)</option>
+        <option value="5">5 postes (Pack Maison)</option>
         <option value="10">10 postes</option>
     </select>
 
@@ -69,22 +63,47 @@
         ⏰ Automatisations horaires
     </div>
 
-    <div class="result-box">
-        <div class="price-label" id="price-desc">Tarif préférentiel</div>
-        <div id="total-v" class="price-value">45,00€</div>
+    <!-- Clic ici pour les remises -10%, -20%, -30% -->
+    <div class="result-box" onclick="applyDiscount()">
+        <div class="price-label">
+            <span id="price-desc">Forfait installation</span>
+            <span id="discount-val" class="discount-badge" style="display:none;">-0%</span>
+        </div>
+        <div id="total-v" class="price-value">89,00€</div>
     </div>
     
-    <div id="gain-v" class="gain-secret">Ref: 26,10</div>
+    <div id="gain-v" class="gain-secret">Ref: 70,10</div>
 </div>
 
 <script>
-    let currentMode = 'ami'; 
+    // INITIALISATION EN MODE PRO (Prix fort)
+    let currentMode = 'pro'; 
+    let discountLevel = 0; 
 
     function toggleMode() {
-        currentMode = (currentMode === 'ami') ? 'pro' : 'ami';
-        // Petit changement de texte pour te confirmer le mode discrètement
-        document.getElementById('price-desc').innerText = (currentMode === 'ami') ? "Tarif préférentiel" : "Forfait installation";
+        currentMode = (currentMode === 'pro') ? 'ami' : 'pro';
+        discountLevel = 0; 
+        
+        document.getElementById('price-desc').innerText = (currentMode === 'pro') ? "Forfait installation" : "Tarif préférentiel";
+        document.getElementById('discount-val').style.display = 'none';
         updateUI();
+    }
+
+    function applyDiscount() {
+        // La remise ne fonctionne qu'en mode PRO
+        if (currentMode === 'pro') {
+            discountLevel += 0.1;
+            if (discountLevel > 0.31) discountLevel = 0; 
+            
+            const badge = document.getElementById('discount-val');
+            if (discountLevel > 0) {
+                badge.innerText = "-" + Math.round(discountLevel * 100) + "%";
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+            updateUI();
+        }
     }
 
     function updateUI() {
@@ -103,9 +122,13 @@
             if (qty >= 5) venteU = 36;
             else if (qty >= 2) venteU = 40;
         } else {
+            // Mode PRO (89€)
             venteU = 89;
             if (qty >= 5) venteU = 65;
             else if (qty >= 2) venteU = 75;
+            
+            // Application de la remise si cliquée
+            venteU = venteU * (1 - discountLevel);
         }
 
         const totalVente = qty * venteU;
@@ -115,6 +138,7 @@
         document.getElementById('gain-v').innerText = "Ref: " + totalGain.toFixed(2).replace('.', ',');
     }
 
+    // Lancer au démarrage pour afficher le prix PRO immédiatement
     window.onload = updateUI;
 </script>
 
