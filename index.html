@@ -13,10 +13,14 @@
         .product-preview img { width: 100%; height: 100%; object-fit: contain; }
         label { display: block; margin: 12px 0 5px; font-weight: 600; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
         select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background-color: #fff; color: #1e293b; margin-bottom: 5px; outline: none; -webkit-appearance: none; }
-        .specs { margin-top: 20px; font-size: 0.85rem; color: #475569; background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #e2e8f0; }
-        .specs b { color: #1e293b; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.7rem; }
         
-        .result-box { margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; user-select: none; }
+        .specs { margin-top: 20px; font-size: 0.8rem; color: #475569; background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #e2e8f0; line-height: 1.4; }
+        .specs b { color: #1e293b; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.7rem; }
+        .warning { font-size: 0.75rem; color: #64748b; margin-top: 5px; font-style: italic; border-top: 1px solid #eee; padding-top: 5px; }
+
+        .btn-reset { display: block; width: 100%; background: none; border: none; color: #94a3b8; font-size: 0.7rem; text-decoration: underline; cursor: pointer; margin-top: 15px; text-align: center; }
+
+        .result-box { margin-top: 5px; padding: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; user-select: none; }
         .price-label { font-size: 0.8rem; opacity: 0.9; font-weight: 600; }
         .price-value { font-size: 2.5rem; font-weight: 800; margin: 5px 0; }
         .discount-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 5px; margin-left: 5px; vertical-align: middle; }
@@ -27,7 +31,6 @@
 <body>
 
 <div class="card">
-    <!-- Clic ici pour passer en mode AMI discrètement -->
     <h2 id="title" onclick="toggleMode()">🏠 Mon Installation</h2>
 
     <div class="product-preview">
@@ -57,13 +60,18 @@
     </select>
 
     <div class="specs">
-        <b>🤖 Fonctions incluses :</b>
+        <b>🤖 Services Inclus :</b>
+        ✅ Installation incluse<br>
         🌴 Simulation de présence (Vacances)<br>
         🌙 Centralisation (Scénario Nuit)<br>
         ⏰ Automatisations horaires
+        <div class="warning">
+            ⚠️ Wifi 2,4GHz nécessaire. Sous réserve de faisabilité (interrupteur existant requis).
+        </div>
     </div>
 
-    <!-- Clic ici pour les remises -10%, -20%, -30% -->
+    <button class="btn-reset" onclick="resetAll()">Réinitialiser les options</button>
+
     <div class="result-box" onclick="applyDiscount()">
         <div class="price-label">
             <span id="price-desc">Forfait installation</span>
@@ -76,25 +84,32 @@
 </div>
 
 <script>
-    // INITIALISATION EN MODE PRO (Prix fort)
     let currentMode = 'pro'; 
     let discountLevel = 0; 
+
+    function resetAll() {
+        currentMode = 'pro';
+        discountLevel = 0;
+        document.getElementById('modele').value = "tactile";
+        document.getElementById('couleur').value = "blanc";
+        document.getElementById('quantite').value = "1";
+        document.getElementById('price-desc').innerText = "Forfait installation";
+        document.getElementById('discount-val').style.display = 'none';
+        updateUI();
+    }
 
     function toggleMode() {
         currentMode = (currentMode === 'pro') ? 'ami' : 'pro';
         discountLevel = 0; 
-        
         document.getElementById('price-desc').innerText = (currentMode === 'pro') ? "Forfait installation" : "Tarif préférentiel";
         document.getElementById('discount-val').style.display = 'none';
         updateUI();
     }
 
     function applyDiscount() {
-        // La remise ne fonctionne qu'en mode PRO
         if (currentMode === 'pro') {
             discountLevel += 0.1;
             if (discountLevel > 0.31) discountLevel = 0; 
-            
             const badge = document.getElementById('discount-val');
             if (discountLevel > 0) {
                 badge.innerText = "-" + Math.round(discountLevel * 100) + "%";
@@ -122,12 +137,9 @@
             if (qty >= 5) venteU = 36;
             else if (qty >= 2) venteU = 40;
         } else {
-            // Mode PRO (89€)
             venteU = 89;
             if (qty >= 5) venteU = 65;
             else if (qty >= 2) venteU = 75;
-            
-            // Application de la remise si cliquée
             venteU = venteU * (1 - discountLevel);
         }
 
@@ -138,7 +150,6 @@
         document.getElementById('gain-v').innerText = "Ref: " + totalGain.toFixed(2).replace('.', ',');
     }
 
-    // Lancer au démarrage pour afficher le prix PRO immédiatement
     window.onload = updateUI;
 </script>
 
