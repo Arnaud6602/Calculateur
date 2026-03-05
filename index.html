@@ -3,29 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurateur</title>
+    <title>Configurateur Interrupteurs Connectés</title>
     <style>
-        :root { --primary: #1e3a8a; --bg: #f8fafc; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
+        :root { --primary: #1e3a8a; --bg: #f8fafc; --accent: #2563eb; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .card { background: white; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
+        
         h2 { text-align: center; color: #1e293b; margin-top: 0; font-size: 1.3rem; cursor: pointer; user-select: none; }
-        .product-preview { width: 100%; height: 250px; background: #fff; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .product-preview img { width: 100%; height: 100%; object-fit: contain; }
-        label { display: block; margin: 12px 0 5px; font-weight: 600; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
-        select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background-color: #fff; color: #1e293b; margin-bottom: 5px; outline: none; -webkit-appearance: none; }
         
-        .specs { margin-top: 20px; font-size: 0.8rem; color: #475569; background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #e2e8f0; line-height: 1.4; }
-        .specs b { color: #1e293b; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.7rem; }
-        .warning { font-size: 0.75rem; color: #64748b; margin-top: 5px; font-style: italic; border-top: 1px solid #eee; padding-top: 5px; }
+        .product-preview { width: 100%; height: 200px; background: #fff; border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #f1f5f9; position: relative; }
+        .product-preview img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; }
+        .color-dot { position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        .btn-reset { display: block; width: 100%; background: none; border: none; color: #94a3b8; font-size: 0.7rem; text-decoration: underline; cursor: pointer; margin-top: 15px; text-align: center; }
+        label { display: block; margin: 12px 0 5px; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background-color: #fff; color: #1e293b; outline: none; -webkit-appearance: none; cursor: pointer; }
 
-        .result-box { margin-top: 5px; padding: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; user-select: none; }
+        .comparison-box { margin-top: 10px; padding: 12px; border-radius: 15px; background: #fff5f5; border: 1px dashed #feb2b2; text-align: center; color: #c53030; font-size: 0.85rem; font-weight: 700; }
+        .comparison-box span { text-decoration: line-through; opacity: 0.6; font-weight: 400; display: block; font-size: 0.75rem; margin-bottom: 2px; }
+
+        .specs { margin-top: 15px; font-size: 0.8rem; color: #475569; background: #f1f5f9; padding: 12px; border-radius: 15px; line-height: 1.5; }
+        .specs b { color: #1e293b; display: block; margin-bottom: 3px; font-size: 0.7rem; text-transform: uppercase; }
+        .warning { font-size: 0.7rem; color: #94a3b8; margin-top: 8px; font-style: italic; border-top: 1px solid #e2e8f0; padding-top: 5px; }
+
+        .result-box { margin-top: 15px; padding: 18px; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; user-select: none; }
         .price-label { font-size: 0.8rem; opacity: 0.9; font-weight: 600; }
-        .price-value { font-size: 2.5rem; font-weight: 800; margin: 5px 0; }
-        .discount-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 5px; margin-left: 5px; vertical-align: middle; }
+        .price-value { font-size: 2.3rem; font-weight: 800; margin: 2px 0; }
+        .discount-badge { font-size: 0.7rem; background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 5px; margin-left: 5px; }
         
-        .gain-secret { margin-top: 15px; color: #cbd5e1; font-size: 0.65rem; text-align: center; width: 100%; font-family: monospace; }
+        .btn-reset { display: block; width: 100%; background: none; border: none; color: #94a3b8; font-size: 0.7rem; text-decoration: underline; cursor: pointer; margin-top: 15px; text-align: center; }
+        .gain-secret { margin-top: 12px; color: #cbd5e1; font-size: 0.65rem; text-align: center; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -34,13 +40,14 @@
     <h2 id="title" onclick="toggleMode()">🏠 Mon Installation</h2>
 
     <div class="product-preview">
-        <img id="product-img" src="tactile-blanc.jpg" alt="Produit">
+        <div id="dot" class="color-dot" style="background: white;"></div>
+        <img id="product-img" src="tactile-blanc.jpg" alt="Equipement">
     </div>
 
-    <label>Modèle</label>
+    <label>Modèle d'interrupteur</label>
     <select id="modele" onchange="updateUI()">
-        <option value="tactile">Lumière Tactile</option>
-        <option value="volet">Volets Roulants</option>
+        <option value="tactile">Interrupteur Tactile</option>
+        <option value="pression">Interrupteur à Pression</option>
     </select>
 
     <label>Finition</label>
@@ -49,46 +56,42 @@
         <option value="noir">Noir Mat</option>
     </select>
 
-    <label>Nombre de postes (1 à 15)</label>
+    <label>Nombre de postes</label>
     <select id="quantite" onchange="updateUI()">
-        <option value="1">1 poste</option>
-        <option value="2">2 postes</option>
-        <option value="3">3 postes</option>
-        <option value="4">4 postes</option>
-        <option value="5">5 postes</option>
-        <option value="6">6 postes</option>
-        <option value="7">7 postes</option>
-        <option value="8">8 postes</option>
-        <option value="9">9 postes</option>
-        <option value="10">10 postes</option>
-        <option value="11">11 postes</option>
-        <option value="12">12 postes</option>
-        <option value="13">13 postes</option>
-        <option value="14">14 postes</option>
+        <option value="1">1 poste</option><option value="2">2 postes</option>
+        <option value="3">3 postes</option><option value="4">4 postes</option>
+        <option value="5">5 postes</option><option value="6">6 postes</option>
+        <option value="7">7 postes</option><option value="8">8 postes</option>
+        <option value="9">9 postes</option><option value="10">10 postes</option>
+        <option value="11">11 postes</option><option value="12">12 postes</option>
+        <option value="13">13 postes</option><option value="14">14 postes</option>
         <option value="15">15 postes</option>
     </select>
 
+    <div class="comparison-box">
+        <span>Estimation Commerce (Matériel seul)</span>
+        Public : <span id="somfy-v">189,00€</span>*
+    </div>
+
     <div class="specs">
-        <b>🤖 Services Inclus :</b>
-        ✅ Installation incluse<br>
-        🌴 Simulation de présence (Vacances)<br>
-        🌙 Centralisation (Scénario Nuit)<br>
-        ⏰ Automatisations horaires
+        <b>✅ Services Inclus :</b>
+        • Installation & Paramétrage complet<br>
+        • Simulation de présence (Automatisée)<br>
+        • Centralisation smartphone & Voix
         <div class="warning">
-            ⚠️ Wifi 2,4GHz nécessaire. Sous réserve de faisabilité (interrupteur existant requis).
+            ⚠️ Wifi 2,4GHz requis. Sous réserve de compatibilité de l'interrupteur existant.
         </div>
     </div>
 
-    <button class="btn-reset" onclick="resetAll()">Réinitialiser les options</button>
-
     <div class="result-box" onclick="applyDiscount()">
         <div class="price-label">
-            <span id="price-desc">Forfait installation</span>
+            <span id="price-desc">FORFAIT TOUT INCLUS</span>
             <span id="discount-val" class="discount-badge" style="display:none;">-0%</span>
         </div>
         <div id="total-v" class="price-value">89,00€</div>
     </div>
     
+    <button class="btn-reset" onclick="resetAll()">Réinitialiser les options</button>
     <div id="gain-v" class="gain-secret">Ref: 70,10</div>
 </div>
 
@@ -96,13 +99,19 @@
     let currentMode = 'pro'; 
     let discountLevel = 0; 
 
+    // TA GRILLE TARIFAIRE DE VENTE
+    const grilleVente = {
+        1: 89, 2: 170, 3: 249, 4: 315, 5: 369, 6: 420, 7: 469, 
+        8: 515, 9: 559, 10: 599, 11: 635, 12: 669, 13: 705, 14: 739, 15: 769
+    };
+
     function resetAll() {
         currentMode = 'pro';
         discountLevel = 0;
         document.getElementById('modele').value = "tactile";
         document.getElementById('couleur').value = "blanc";
         document.getElementById('quantite').value = "1";
-        document.getElementById('price-desc').innerText = "Forfait installation";
+        document.getElementById('price-desc').innerText = "FORFAIT TOUT INCLUS";
         document.getElementById('discount-val').style.display = 'none';
         updateUI();
     }
@@ -110,8 +119,7 @@
     function toggleMode() {
         currentMode = (currentMode === 'pro') ? 'ami' : 'pro';
         discountLevel = 0; 
-        document.getElementById('price-desc').innerText = (currentMode === 'pro') ? "Forfait installation" : "Tarif préférentiel";
-        document.getElementById('discount-val').style.display = 'none';
+        document.getElementById('price-desc').innerText = (currentMode === 'pro') ? "FORFAIT TOUT INCLUS" : "TARIF PRÉFÉRENTIEL";
         updateUI();
     }
 
@@ -120,12 +128,8 @@
             discountLevel += 0.1;
             if (discountLevel > 0.31) discountLevel = 0; 
             const badge = document.getElementById('discount-val');
-            if (discountLevel > 0) {
-                badge.innerText = "-" + Math.round(discountLevel * 100) + "%";
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
+            badge.innerText = "-" + Math.round(discountLevel * 100) + "%";
+            badge.style.display = (discountLevel > 0) ? 'inline-block' : 'none';
             updateUI();
         }
     }
@@ -135,25 +139,29 @@
         const col = document.getElementById('couleur').value;
         const qty = parseInt(document.getElementById('quantite').value);
         const img = document.getElementById('product-img');
+        const dot = document.getElementById('dot');
         
+        // Nom de l'image attendue : tactile-blanc.jpg ou pression-noir.jpg
         img.src = mod + '-' + col + '.jpg';
+        dot.style.background = (col === 'blanc') ? 'white' : '#1e293b';
 
-        const achatU = 18.90;
-        let venteU;
+        // Calcul Comparatif (Somfy/Legrand)
+        let prixCommerce = (qty * 79) + 120; 
+        document.getElementById('somfy-v').innerText = prixCommerce.toFixed(2).replace('.', ',') + "€";
+
+        // Ton prix de vente (depuis la grille)
+        let totalVente = grilleVente[qty];
 
         if (currentMode === 'ami') {
-            venteU = 45;
-            if (qty >= 5) venteU = 36;
-            else if (qty >= 2) venteU = 40;
+            totalVente = totalVente * 0.55; 
         } else {
-            venteU = 89;
-            if (qty >= 5) venteU = 65;
-            else if (qty >= 2) venteU = 75;
-            venteU = venteU * (1 - discountLevel);
+            totalVente = totalVente * (1 - discountLevel);
         }
 
-        const totalVente = qty * venteU;
-        const totalGain = totalVente - (qty * achatU);
+        // Calcul Marge (Ref)
+        const achatU = 18.90; // Coût moyen matériel
+        const totalCout = (qty * achatU) + 5; // +5€ frais fixes (box/passerelle)
+        const totalGain = totalVente - totalCout;
 
         document.getElementById('total-v').innerText = totalVente.toFixed(2).replace('.', ',') + "€";
         document.getElementById('gain-v').innerText = "Ref: " + totalGain.toFixed(2).replace('.', ',');
